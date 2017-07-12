@@ -5,6 +5,18 @@
 	<artifactId>GeoServiceQuality</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
+	
+	 <dependencyManagement>
+		<dependencies>
+		  <dependency>
+			<groupId>org.wildfly.swarm</groupId>
+			<artifactId>bom</artifactId>
+			<version>${version.wildfly.swarm}</version>
+			<scope>import</scope>
+			<type>pom</type>
+		  </dependency>
+		</dependencies>
+	  </dependencyManagement>
 
 	<dependencies>
 	
@@ -49,11 +61,24 @@
 			<artifactId>jsf-impl</artifactId>
 			<version>2.1.7</version>
 		</dependency>
+		
+		    <!-- Swarm Fractions -->
+			<dependency>
+			  <groupId>org.wildfly.swarm</groupId>
+			  <artifactId>jaxrs</artifactId>
+			</dependency>
+			<dependency>
+			  <groupId>org.wildfly.swarm</groupId>
+			  <artifactId>logging</artifactId>
+			</dependency>
 	</dependencies>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
+		
+		 <!-- Swarm Fractions -->
+		<version.wildfly.swarm>1.0.0.CR1</version.wildfly.swarm>
 
 		<version.wildfly>9.0.2.Final</version.wildfly>
 		<jboss.home>${project.build.directory}/wildfly-${version.wildfly}</jboss.home>
@@ -124,18 +149,19 @@
 					</execution>
 				</executions>
 			</plugin>
-
-
-			<!-- Maven WildFly plugin -->
-			<plugin>
-				<groupId>org.wildfly.plugins</groupId>
-				<artifactId>wildfly-maven-plugin</artifactId>
-				<version>${wildfly-maven-plugin.version}</version>
-				<configuration>
-					<jbossHome>${jboss.home}</jbossHome>
-					<serverConfig>${server.config}</serverConfig>
-				</configuration>
-			</plugin>
+			
+			 <plugin>
+				<groupId>org.wildfly.swarm</groupId>
+				<artifactId>wildfly-swarm-plugin</artifactId>
+				<version>${version.wildfly.swarm}</version>
+				<executions>
+				  <execution>
+					<goals>
+					  <goal>package</goal>
+					</goals>
+				  </execution>
+				</executions>
+			  </plugin>
 
 		</plugins>
 
