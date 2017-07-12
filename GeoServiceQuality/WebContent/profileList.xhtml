@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:jsf="http://xmlns.jcp.org/jsf"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui" 
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions">
+<f:view contentType="text/html">
+	<h:head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Perfiles de evaluación</title>
+
+		<link rel="stylesheet"
+			href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" />
+		<link href="./css/form_list.css" rel="stylesheet" />
+	</h:head>
+
+	<h:body>
+	
+	      <nav class="navbar navbar-static-top navbar-dark bg-inverse navbar-inverse">
+	      <a class="navbar-brand" href="#">GeoServiceQuality</a>
+	      <ul class="nav navbar-nav">
+	        <li class="nav-item">
+	          <a class="nav-link" href="${request.contextPath}/home.xhtml">Home</a>
+	        </li>
+	        <li class="nav-item">
+	          <a class="nav-link" href="${request.contextPath}/measurableObjectList.xhtml">Objetos Medibles</a>
+	        </li>
+	         <li class="nav-item active">
+	          <a class="nav-link" href="${request.contextPath}/profileList.xhtml">Perfiles<span class="sr-only">(current)</span></a>
+	        </li>
+	        <li class="nav-item">
+	          <a class="nav-link" href="${request.contextPath}/evaluationList.xhtml">Evaluaciones</a>
+	        </li>
+	          <li class="nav-item">
+	          <a class="nav-link" href="${request.contextPath}/reports.xhtml">Reportes</a>
+	        </li>
+	        <li class="nav-item">
+	          <a class="nav-link" href="${request.contextPath}/userList.xhtml">Usuarios</a>
+	        </li>
+			<li class="nav-item"><a class="nav-link"
+				href="${request.contextPath}/qualityModelList.xhtml">Modelo de Calidad</a>
+			</li>        
+	        <li class="nav-item">
+	          <a class="nav-link" href="${request.contextPath}/about.xhtml">Acerca</a>
+	        </li>
+	       </ul>
+	       <ul class="nav navbar-nav navbar-right">
+		      <li><a href="${request.contextPath}/logoutServlet"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+		  </ul>
+	    </nav>
+	
+		<div class="container">
+
+			<h:form id="profiles" method="post" rendered="#{!profileBeanList.isShowMore() and !profileBeanList.isShowMoreWeighing()}">
+				<p:growl id="msgs" />
+				<h3 class="form-signin-heading">Perfiles de evaluación</h3>
+				<hr></hr>
+				<p:dataTable id="profiles" 
+					value="#{profileBeanList.listProfile}"
+					var="pitem" 
+					tableStyle="table-layout: auto;"
+					selection="#{profileBeanList.selectedProfile}"
+					rowKey="#{pitem.getProfileId()}" 
+					style="margin-bottom:40"
+					widgetVar="p"
+					editable="true"
+					emptyMessage="No existen perfiles">
+
+					<p:ajax event="rowEdit" listener="#{profileBeanList.onRowEditProfile}" update=":profiles:msgs" />
+					<p:ajax event="rowSelectRadio" listener="#{profileBeanList.onRowSelect}" update=":profileMetrics "/>
+
+					<p:column selectionMode="single"
+						style="width:40px; text-align:center" />
+
+					<p:column headerText="ID" sortBy="#{pitem.profileId}">
+						<h:outputText value="#{pitem.profileId}" />
+					</p:column>
+
+					<p:column headerText="Nombre" sortBy="#{pitem.name}">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{pitem.name}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText id="nameInput" value="#{pitem.name}"
+									style="width:100%" />
+							</f:facet>
+						</p:cellEditor>						
+					</p:column>
+
+					<p:column headerText="Granuralidad" sortBy="#{pitem.granurality}">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{pitem.granurality}" />
+							</f:facet>
+							<f:facet name="input">
+								<h:selectOneMenu value="#{pitem.granurality}" style="width:100%">
+									<f:selectItem itemValue="Ide" itemLabel="Ide"/>
+									<f:selectItem itemValue="Institución" itemLabel="Institución"/>
+									<f:selectItem itemValue="Nodo" itemLabel="Nodo"/>
+									<f:selectItem itemValue="Capa" itemLabel="Capa"/>
+									<f:selectItem itemValue="Servicio" itemLabel="Servicio"/>
+								</h:selectOneMenu>
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+
+					<p:column headerText="Ponderado" sortBy="#{pitem.isWeightedFlag}">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{pitem.isWeightedFlag}" />
+							</f:facet>
+							<f:facet name="input">
+								<h:selectOneMenu value="#{pitem.isWeightedFlag}" style="width:100%">
+									<f:selectItem itemValue="true" itemLabel="true"/>
+									<f:selectItem itemValue="false" itemLabel="false"/>
+								</h:selectOneMenu>
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+					
+					<p:column headerText="Acciones">
+						<p:rowEditor />
+					</p:column>
+				</p:dataTable>
+				
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<p:button class="btn btn-default" icon="ui-icon-plus"
+							value="Nuevo" outcome="profileAdd" />
+						<p:commandButton class="btn btn-default" icon="ui-icon-trash"
+							value="Eliminar" id="deleteProfileIcon"
+							actionListener="#{profileBeanList.deleteProfile}" update="profiles :profiles:msgs :profileMetrics" />
+					</div>
+				</div>
+				
+			</h:form>
+		</div>
+			
+		<div class="container">
+			<h:form id="profileMetrics" method="post" rendered="#{!profileBeanList.isShowMore() and !profileBeanList.isShowMoreWeighing()}">
+			<p:growl id="msgs" />
+				<hr></hr>			
+				<h4 class="form-signin-heading">Lista de Métricas disponibles para el Perfil seleccionado.</h4>
+				
+				<div class="ui-g">
+				    <div class="ui-g-6">				
+						<h5 class="form-signin-heading">Métricas Booleanas.</h5>
+						<p:dataTable id="booleanProfileMetrics" 
+							value="#{profileBeanList.listBooleanProfileMetric}" 
+							var="bpmitem" 
+							tableStyle="table-layout: auto;"
+							selection="#{profileBeanList.selectedBooleanProfileMetric}"
+							rowKey="#{bpmitem.getMetricRangeID()}" 
+							style="margin-bottom:40" 
+							widgetVar="bpm"
+							editable="true"
+							emptyMessage="No hay métricas de tipo booleanas asociadas al perfil seleccionado.">
+		
+							<p:ajax event="rowEdit" listener="#{profileBeanList.onRowEditBooleanProfileMetrics}" update=":profileMetrics:msgs" />
+							<p:ajax event="rowSelectRadio" listener="#{profileBeanList.onRowSelectBoolean}" update=":profileMetrics "/>
+							
+							<p:column selectionMode="single"
+								style="width:40px; text-align:center" />
+		
+							<p:column headerText="Métrica" sortBy="#{bpmitem.getMetricName()}">
+								<h:outputText value="#{bpmitem.getMetricName()}" />
+							</p:column>
+							
+							<p:column headerText="Unidad" sortBy="#{bpmitem.getUnitName()}">
+								<h:outputText value="#{bpmitem.getUnitName()}" />
+							</p:column>
+		
+							<p:column headerText="Valor Booleano" sortBy="#{bpmitem.getBooleanAcceptanceValue()}">
+								<h:outputText value="#{bpmitem.getBooleanAcceptanceValue()}" />
+								<!--<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{bpmitem.getBooleanAcceptanceValue()}" />
+									</f:facet>
+									<f:facet name="input">
+										<h:selectOneMenu value="#{bpmitem.booleanAcceptanceValue}" style="width:100%">
+											<f:selectItem itemValue="TRUE" itemLabel="true"/>
+											<f:selectItem itemValue="FALSE" itemLabel="false"/>
+										</h:selectOneMenu>
+									</f:facet>
+								</p:cellEditor>-->
+							</p:column>
+											
+							<p:column headerText="Acciones">
+								<p:rowEditor />
+							</p:column>					
+		
+						</p:dataTable>
+						
+						<br/><br/>
+						
+						<h5 class="form-signin-heading">Métricas Enumeradas.</h5>
+						<p:dataTable id="enumeratedProfileMetrics" 
+							value="#{profileBeanList.listEnumeratedProfileMetric}" 
+							var="epmitem" 
+							tableStyle="table-layout: auto;"
+							selection="#{profileBeanList.selectedEnumeratedProfileMetric}"
+							rowKey="#{epmitem.getMetricRangeID()}" 
+							style="margin-bottom:40" 
+							widgetVar="epm"
+							editable="true"
+							emptyMessage="No hay métricas de tipo enumeradas asociadas al perfil seleccionado.">
+		
+							<p:ajax event="rowEdit" listener="#{profileBeanList.onRowEditEnumeratedProfileMetrics}" update=":profileMetrics:msgs" />
+							<p:ajax event="rowSelectRadio" listener="#{profileBeanList.onRowSelectEnumerated}" update=":profileMetrics "/>
+							
+							<p:column selectionMode="single"
+								style="width:40px; text-align:center" />
+		
+							<p:column headerText="Métrica" sortBy="#{epmitem.getMetricName()}">
+								<h:outputText value="#{epmitem.getMetricName()}" />
+							</p:column>
+							
+							<p:column headerText="Unidad" sortBy="#{epmitem.getUnitName()}">
+								<h:outputText value="#{epmitem.getUnitName()}" />
+							</p:column>
+		
+							<p:column headerText="Valor Enumerado" sortBy="#{epmitem.getEnumerateAcceptanceValue()}">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{epmitem.getEnumerateAcceptanceValue()}" />
+									</f:facet>
+									<f:facet name="input">
+										<h:selectOneMenu value="#{epmitem.enumerateAcceptanceValue}" style="width:100%">
+											<f:selectItem itemValue="B" itemLabel="Basico"/>
+											<f:selectItem itemValue="I" itemLabel="Intermedio"/>
+											<f:selectItem itemValue="C" itemLabel="Completo"/>
+										</h:selectOneMenu>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+											
+							<p:column headerText="Acciones">
+								<p:rowEditor />
+							</p:column>					
+		
+						</p:dataTable>
+						
+					</div>
+
+					<div class="ui-g-6">					
+
+						<h5 class="form-signin-heading">Métricas Enteras.</h5>				
+						<p:dataTable id="integerProfileMetrics" 
+							value="#{profileBeanList.listIntegerProfileMetric}" 
+							var="ipmitem" 
+							tableStyle="table-layout: auto;"
+							selection="#{profileBeanList.selectedIntegerProfileMetric}"
+							rowKey="#{ipmitem.getMetricRangeID()}" 
+							style="margin-bottom:40" 
+							widgetVar="ipm"
+							editable="true"
+							emptyMessage="No hay métricas de tipo enteras asociadas al perfil seleccionado.">
+		
+							<p:ajax event="rowEdit" listener="#{profileBeanList.onRowEditIntegerProfileMetrics}" update=":profileMetrics:msgs" />
+							<p:ajax event="rowSelectRadio" listener="#{profileBeanList.onRowSelectInteger}" update=":profileMetrics "/>
+							
+							<p:column selectionMode="single"
+								style="width:40px; text-align:center" />
+		
+							<p:column headerText="Métrica" sortBy="#{ipmitem.getMetricName()}">
+								<h:outputText value="#{ipmitem.getMetricName()}" />
+							</p:column>
+							
+							<p:column headerText="Unidad" sortBy="#{ipmitem.getUnitName()}">
+								<h:outputText value="#{ipmitem.getUnitName()}" />
+							</p:column>
+		
+							<p:column headerText="Valor Entero" sortBy="#{ipmitem.getIntegerAcceptanceValue()}">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{ipmitem.getIntegerAcceptanceValue()}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText id="integerValueInput" value="#{ipmitem.integerAcceptanceValue}"
+											style="width:100%" />
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+											
+							<p:column headerText="Acciones">
+								<p:rowEditor />
+							</p:column>					
+		
+						</p:dataTable>
+						
+						<br/><br/>
+						
+						<h5 class="form-signin-heading">Métricas Porcentaje.</h5>
+						<p:dataTable id="percentageProfileMetrics" 
+							value="#{profileBeanList.listPercentageProfileMetric}" 
+							var="ppmitem" 
+							tableStyle="table-layout: auto;"
+							selection="#{profileBeanList.selectedPercentageProfileMetric}"
+							rowKey="#{ppmitem.getMetricRangeID()}" 
+							style="margin-bottom:40" 
+							widgetVar="ppm"
+							editable="true"
+							emptyMessage="No hay métricas de tipo porcentaje asociadas al perfil seleccionado.">
+		
+							<p:ajax event="rowEdit" listener="#{profileBeanList.onRowEditPercentageProfileMetrics}" update=":profileMetrics:msgs" />
+							<p:ajax event="rowSelectRadio" listener="#{profileBeanList.onRowSelectPercentage}" update=":profileMetrics "/>
+							
+							<p:column selectionMode="single"
+								style="width:40px; text-align:center" />
+		
+							<p:column headerText="Métrica" sortBy="#{ppmitem.getMetricName()}">
+								<h:outputText value="#{ppmitem.getMetricName()}" />
+							</p:column>
+							
+							<p:column headerText="Unidad" sortBy="#{ppmitem.getUnitName()}">
+								<h:outputText value="#{ppmitem.getUnitName()}" />
+							</p:column>
+		
+							<p:column headerText="Valor Porcentaje" sortBy="#{ppmitem.getPercentageAcceptanceValue()}">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{ppmitem.getPercentageAcceptanceValue()}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText id="percentajeValueInput" value="#{ppmitem.percentageAcceptanceValue}"
+											style="width:100%" />
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+											
+							<p:column headerText="Acciones">
+								<p:rowEditor />
+							</p:column>					
+		
+						</p:dataTable>
+					
+					</div>
+				</div>
+				
+				<hr></hr>
+										
+				<div class="panel panel-default">
+					<div class="panel-body">
+						
+						<p:commandButton class="btn btn-default" icon="ui-icon-plus"
+							value="Asociar" id="showMore"
+							actionListener="#{profileBeanList.showMore}" 
+							update="@all"/>
+						
+						<p:commandButton class="btn btn-default" icon="ui-icon-trash"
+							value="Remover" id="removeProfileMetricIcon"
+							actionListener="#{profileBeanList.removeProfileMetric}" 
+							update="profileMetrics :profileMetrics:msgs" />
+							
+						<p:commandButton class="btn btn-default" icon="ui-icon-pencil"
+							value="Editar ponderaciones" id="showMoreWeighing"
+							actionListener="#{profileBeanList.showMoreWeighing}"
+							rendered="#{profileBeanList.selectedProfile.getIsWeightedFlag()}" 
+							update="@all" />
+					</div>
+				</div>
+			</h:form>
+		</div>		
+		
+		<!-- Second Page -->
+		<div class="container">
+			<h:form id="profileMetric" class="form-signin" method="post" rendered="#{profileBeanList.isShowMore() and !profileBeanList.isShowMoreWeighing()}">
+				<p:growl id="msgs" />
+				<h2 class="form-signin-heading">Asociar Métrica a Perfil</h2>
+				
+				<hr></hr>
+				
+				<h3 class="form-signin-heading">
+					<h:outputLabel id="userIDOutputLabel" value="Lista de Métricas a asociar para el Perfil seleccionado:" />
+				</h3>
+				
+				<p:panel id="panel" class="panel panel-default">
+					<label for="inputType">Métrica</label>
+					<br></br>
+					 <h:selectOneMenu value="#{profileBeanList.profileMetric}"
+					 	converter="omnifaces.SelectItemsConverter" style="width:100%">
+						<f:selectItem itemLabel="Seleccione una Métrica" noSelectionOption="false" />
+						<f:selectItems value="#{profileBeanList.listProfileMetrics}" var="pm" itemLabel="#{pm.name}" />
+					</h:selectOneMenu> 
+				</p:panel>
+
+				<div class="panel panel-default">
+					<div class="panel-body">
+					
+						<p:commandButton class="btn btn-default" icon="ui-icon-disk"
+							value="Asociar Métrica" id="saveMetricProfile"
+							actionListener="#{profileBeanList.save}"
+							update="profileMetric :profileMetric:msgs"/>
+						
+						<p:commandButton class="btn btn-default" icon="ui-icon-circle-arrow-w"
+							value="Volver" id="back"
+							actionListener="#{profileBeanList.showLess}" 
+							update="@all"/>
+					</div>
+				</div>
+			</h:form>
+			
+		</div>
+
+		<!-- Third Page -->
+		<div class="container">
+			<h:form id="weighing" class="form-signin" method="post" rendered="#{profileBeanList.isShowMoreWeighing() and !profileBeanList.isShowMore()}">
+				<p:growl id="msgs" showDetail="true"/>
+				<h2 class="form-signin-heading">Edición de ponderaciones</h2>
+				
+				<hr></hr>
+				 
+			    <p:treeTable value="#{profileBeanList.weighingRoot}" editable="true" var="pw" style="margin-bottom:20px">
+			        <f:facet name="header">
+			            Árbol de ponderaciones
+			        </f:facet>
+			 
+			        <p:ajax event="rowEdit" listener="#{profileBeanList.onWeighingRowEdit(pw.weight, pw.weighingID)}" update=":weighing:msgs" />
+			        <p:ajax event="rowEditCancel" listener="#{profileBeanList.onWeighingRowCancel}" update=":weighing:msgs" />
+
+			        <p:column headerText="Nombre">
+			        	<h:outputText value="#{pw.name}" />
+			        </p:column>
+			        
+			        <p:column headerText="Peso relativo">
+				        <p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{pw.weight}" />
+							</f:facet>
+							<f:facet name="input">
+								<h:selectOneMenu value="#{pw.weight}" style="width:100%">
+									<f:selectItem itemValue="1" itemLabel="1"/>
+									<f:selectItem itemValue="1/2" itemLabel="1/2"/>
+									<f:selectItem itemValue="1/3" itemLabel="1/3"/>
+									<f:selectItem itemValue="1/4" itemLabel="1/4"/>
+									<f:selectItem itemValue="1/5" itemLabel="1/5"/>
+									<f:selectItem itemValue="1/6" itemLabel="1/6"/>
+									<f:selectItem itemValue="1/7" itemLabel="1/7"/>
+									<f:selectItem itemValue="1/8" itemLabel="1/8"/>
+									<f:selectItem itemValue="1/9" itemLabel="1/9"/>
+								</h:selectOneMenu>
+							</f:facet>
+						</p:cellEditor>
+			        </p:column>
+			        
+			        <p:column headerText="Tipo">
+			            <h:outputText value="#{pw.type}" />
+			        </p:column>
+			        
+			        <p:column style="width:50px">
+			            <p:rowEditor />
+			        </p:column>
+			        
+			    </p:treeTable>
+
+				<br></br>
+
+				<h3 class="form-signin-heading">Lista de valores aceptados de ponderación</h3>
+				<hr></hr>
+			    <p:treeTable value="#{profileBeanList.weightValues}" var="wv" style="margin-bottom:20px">
+			 
+			        <p:column headerText="Valor"> 
+			        	<h:outputText value="#{wv.value}" />
+			        </p:column>
+			        
+			        <p:column headerText="Descripción">
+						<h:outputText value="#{wv.description}" />
+			        </p:column>
+			        
+			        <p:column headerText="Reciproco">
+			            <h:outputText value="#{wv.reciprocal}" />
+			        </p:column>
+			        
+			    </p:treeTable>
+
+				<div class="panel panel-default">
+					<div class="panel-body">						
+						<p:commandButton class="btn btn-default" icon="ui-icon-circle-arrow-w"
+							value="Volver" id="back"
+							actionListener="#{profileBeanList.showLessWeighing}" 
+							update="@all"/>
+					</div>
+				</div>
+			</h:form>
+			
+		</div>
+		
+	</h:body>
+</f:view>
+</html>

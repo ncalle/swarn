@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:jsf="http://xmlns.jcp.org/jsf"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+<f:view contentType="text/html">
+	<h:head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Home</title>
+
+		<link rel="stylesheet"
+			href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" />
+		<link href="./css/form_list.css" rel="stylesheet" />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+	</h:head>
+
+	<h:body>
+
+		<nav
+			class="navbar navbar-static-top navbar-dark bg-inverse navbar-inverse">
+			<a class="navbar-brand" href="#">GeoServiceQuality</a>
+			<ul class="nav navbar-nav">
+				<li class="nav-item active"><a class="nav-link"
+					href="${request.contextPath}/home.xhtml">Home<span
+						class="sr-only">(current)</span></a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/measurableObjectList.xhtml">Objetos
+						Medibles</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/profileList.xhtml">Perfiles</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/evaluationList.xhtml">Evaluaciones</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/reports.xhtml">Reportes</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/userList.xhtml">Usuarios</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/qualityModelList.xhtml">Modelo de
+						Calidad</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/about.xhtml">Acerca</a></li>
+
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+				<li><a href="${request.contextPath}/logoutServlet"><span
+						class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+			</ul>
+		</nav>
+
+		
+	    <div class="jumbotron">
+	      <div class="container">
+	        <h2>Bienvenido, ${session.getAttribute("name")}</h2>
+	        <p>Aquí podrá realizar mediciones sobre los servicios web geográficos que la IdeUy dispone, evaluar el estado general de los mismos así como agregar y/o modificar los mecanismos de medición de calidad existentes dentro de la plataforma.</p>
+	        <p>Para mayor información ver: 
+	        	<a class="btn btn-secondary" href="${request.contextPath}/about.xhtml" >Acerca</a></p>
+	      </div>
+	    </div>
+	
+	    <div class="container">     
+	      <h3 class="form-signin-heading" style="text-align: center;">Servicios destacados</h3>
+	      <div class="row">
+	        <div class="col-md-6">	
+			  <h:form id="best_services" method="post" >
+				<h4 class="form-signin-heading">Servicios evaluados con la mejor disponibilidad.</h4>
+				<p:dataTable id="dtbest_services" 
+				  value="#{reportsBean.listBestServices}" 
+				  var="bsitem" 
+				  tableStyle="table-layout: auto;"
+				  widgetVar="bs"
+				  emptyMessage="No existen resultados.">
+				        					
+					<p:column style="width:16px">
+			            <p:rowToggler />
+			        </p:column>
+			        
+ 					<p:column headerText="Descripción" >
+				  		<h:outputText value="#{bsitem.measurableObjectDesc}" />
+					</p:column> 
+					
+					<p:column headerText="Tipo" >
+				  		<h:outputText value="Servicio" />
+					</p:column>
+					
+					<p:column headerText="Disponibilidad">
+						<p:progressBar value="#{bsitem.successPercentage}" labelTemplate="#{bsitem.successPercentage}%" displayOnly="true"/>
+					</p:column>
+								 
+			        <p:rowExpansion>
+			        	<a href="#{bsitem.measurableObjectUrl}">Link al Servicio</a> 
+			        </p:rowExpansion>
+					
+				</p:dataTable>
+			  </h:form>
+			</div>
+				
+	        <div class="col-md-6">	
+			  <h:form id="worst_services" method="post" >
+				<h4 class="form-signin-heading">Servicios evaluados con la peor disponibilidad.</h4>
+				<p:dataTable id="dtworst_services" 
+				  value="#{reportsBean.listWorstServices}" 
+				  var="wsitem" 
+				  tableStyle="table-layout: auto;"
+				  widgetVar="ws"
+				  emptyMessage="No existen resultados.">
+				  
+				  	<p:column style="width:16px">
+			            <p:rowToggler />
+			        </p:column>
+				        					
+					<p:column headerText="Descripción" >
+				  		<h:outputText value="#{wsitem.measurableObjectDesc}" />
+					</p:column> 
+					
+					<p:column headerText="Tipo" >
+				  		<h:outputText value="Servicio" />
+					</p:column>
+					
+					<p:column headerText="Disponibilidad">
+						<p:progressBar value="#{wsitem.successPercentage}" labelTemplate="#{wsitem.successPercentage}%" displayOnly="true"/>
+					</p:column>
+					
+					<p:rowExpansion>
+			        	<a href="#{wsitem.measurableObjectUrl}">Link al Servicio</a> 
+			        </p:rowExpansion>
+			        
+				</p:dataTable>
+			  </h:form>
+			</div>
+		  </div>
+		  
+		  <hr></hr>
+	  
+	  	   <div class="row">
+	        <div class="col-md-4">
+	          <h4 class="form-signin-heading">Éxitos vs Fracasos</h4>
+	          <p>Muestra en cantidades porcentuales el total de evaluaciones con resultado exitoso contra el porcentaje de evaluaciónes con resultado fallido. </p>
+	          <p:chart type="pie" model="#{reportsBean.pieChartEvaluationSuccessVsFailed}" />
+	        </div>
+	        <div class="col-md-4">
+	          <h4 class="form-signin-heading">Éxitos por Perfil</h4>
+	          <p>Muestra el porcentaje de éxitos que se han obtenido hasta el momento, evaluando los distintos Perfiles existentes.</p>
+	          <p:chart type="bar" model="#{reportsBean.barChartSuccessEvaluationPerProfile}" />
+	       </div>
+	        <div class="col-md-4">
+			  <h4 class="form-signin-heading">Disponibilidad de servicio</h4>
+		      <p>Muestra el tiempo de respuesta medio de las últimas 100 evaluaciones realizadas hasta el momento, para los distintos Nodos.</p>
+		      <p:chart type="line" model="#{reportsBean.mediaResponseTime}" />
+	        </div>
+	      </div>
+	      	
+	      <hr></hr>
+	      
+	      <h:form>
+		      <h3 class="form-signin-heading">Resumen de Evaluaciones:</h3>
+				<p:dataTable id="dtevaluationSummary"
+					value="#{homeBean.listEvaluationSummary}" var="hitem"
+					tableStyle="table-layout: auto;"
+					rowKey="#{hitem.getEvaluationSummaryID()}" widgetVar="evs" rows="5"
+					paginator="true"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,25"
+					emptyMessage="No existen resultados.">
+			        	
+					<p:column exportable="false" style="width:16px">
+			            <p:rowToggler />
+			        </p:column>
+
+					<p:column headerText="Perfil" sortBy="#{hitem.profileName}">
+						<h:outputText value="#{hitem.profileName}" />
+					</p:column>
+					
+					<p:column headerText="Tipo de Objeto" sortBy="#{hitem.entityType}">
+						<h:outputText value="#{hitem.entityType}" />
+					</p:column>
+					
+					<p:column headerText="Descripción" sortBy="#{hitem.measurableObjectDescription}">
+						<h:outputText value="#{hitem.measurableObjectDescription}" />
+					</p:column>
+
+					<p:column headerText="Resultado" sortBy="#{hitem.success}">
+						<h:outputText value="#{hitem.success}" />
+					</p:column>
+					
+					<p:column headerText="Porcentaje de exito" sortBy="#{hitem.successPercentage}">
+						<h:outputText value="#{hitem.successPercentage}" />
+					</p:column>
+
+			        <p:rowExpansion>
+			        	<a href="#{hitem.measurableObjectName}">Link al Servicio</a> 
+			        </p:rowExpansion>
+					
+				</p:dataTable>
+				
+				<div class="panel panel-default">
+					<div class="panel-body">
+		        	  	<h:commandLink>
+	       					<p:commandButton class="btn btn-default" icon="fa fa-file-pdf-o red" value="Download" />
+	       					<p:dataExporter type="pdf" target="dtevaluationSummary" fileName="Resumen_de_Evaluaciones"/>
+	   					</h:commandLink>
+   					</div>
+   				</div>
+   			
+			</h:form>
+	
+	    </div> <!-- /container -->
+	    
+	    
+		<script src="../../assets/js/vendor/jquery.min.js"></script>
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.2.0/js/tether.min.js"></script>
+		<script src="../../dist/js/bootstrap.min.js"></script>
+		<script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+
+	</h:body>
+</f:view>
+</html>

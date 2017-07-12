@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:jsf="http://xmlns.jcp.org/jsf"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:c="http://java.sun.com/jstl/core">
+<f:view contentType="text/html">
+	<h:head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Datos de Usuarios</title>
+
+		<link rel="stylesheet"
+			href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" />
+		<link href="./css/form_list.css" rel="stylesheet" />
+	</h:head>
+
+	<h:body>
+		<nav
+			class="navbar navbar-static-top navbar-dark bg-inverse navbar-inverse">
+			<a class="navbar-brand" href="#">GeoServiceQuality</a>
+			<ul class="nav navbar-nav">
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/home.xhtml">Home</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/measurableObjectList.xhtml">Objetos Medibles</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/profileList.xhtml">Perfiles</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/evaluationList.xhtml">Evaluaciones</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/reports.xhtml">Reportes</a></li>
+				<li class="nav-item active"><a class="nav-link"
+					href="${request.contextPath}/userList.xhtml">Usuarios<span
+						class="sr-only">(current)</span></a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/qualityModelList.xhtml">Modelo de Calidad</a></li>						
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/about.xhtml">Acerca</a></li>
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+				<li><a href="${request.contextPath}/logoutServlet"><span
+						class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+			</ul>
+		</nav>
+
+		<div class="container">
+
+			<h:form id="users" method="post"  rendered="#{!userBeanList.isShowMore()}"><p:growl id="msgs" />
+				<h2 class="form-signin-heading">Datos de Usuarios</h2>
+				<hr></hr>
+				<p:dataTable id="users" 
+					value="#{userBeanList.listUsers}" 
+					var="uitem" 
+					tableStyle="table-layout: auto;"
+					selection="#{userBeanList.selectedUser}"
+					rowKey="#{uitem.getUserId()}" 
+					style="margin-bottom:40" 
+					rows="5"
+					paginator="true" 
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15" 
+					widgetVar="u" 
+					editable="true"
+					emptyMessage="No existen usuarios.">
+
+       				<p:ajax event="rowEdit" listener="#{userBeanList.onRowEdit}" update=":users:msgs" />
+       				<p:ajax event="rowSelectRadio" listener="#{userBeanList.onRowSelect}" update=":evobject:measurableObjects :evobject:userIDOutputLabel" />
+
+					<p:column selectionMode="single"
+						style="width:40px; text-align:center" />
+
+					<p:column headerText="ID" sortBy="#{uitem.getUserId()}">
+						<h:outputText value="#{uitem.getUserId()}" />
+					</p:column>
+
+					<p:column headerText="Institución" sortBy="#{uitem.institutionName}">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{uitem.institutionName}" />
+							</f:facet>
+							<f:facet name="input">
+								<h:selectOneMenu value="#{userBeanList.institution}" converter="omnifaces.SelectItemsConverter" style="width:100%">
+						        	<f:selectItem itemLabel="Seleccione Institución" noSelectionOption="true" />
+						            <f:selectItems value="#{userBeanList.listInstitutions}" var="ins" itemLabel="#{ins.name}" />
+						        </h:selectOneMenu>
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+
+					<p:column headerText="Email" sortBy="#{uitem.email}">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{uitem.email}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText id="emailInput" value="#{uitem.email}"
+									style="width:100%" />
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+
+					<p:column headerText="Tipo" sortBy="#{uitem.userGroupName}">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{uitem.userGroupName}" />
+							</f:facet>
+							<f:facet name="input">
+						        <h:selectOneMenu value="#{userBeanList.userGroup}" converter="omnifaces.SelectItemsConverter" style="width:100%">
+						        	<f:selectItem itemLabel="Seleccione Tipo" noSelectionOption="true" />
+						            <f:selectItems value="#{userBeanList.listUserGroups}" var="ug" itemLabel="#{ug.name}" />
+						        </h:selectOneMenu>	
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+
+
+					<p:column headerText="Nombre" sortBy="#{uitem.firstName}">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{uitem.firstName}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText id="firstNameInput" value="#{uitem.firstName}"
+									style="width:100%" />
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+
+					<p:column headerText="Apellido" sortBy="#{uitem.lastName}">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{uitem.lastName}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText id="lastNameInput" value="#{uitem.lastName}"
+									style="width:100%" />
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+
+					<p:column headerText="Telefono" sortBy="#{uitem.phoneNumber}">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{uitem.phoneNumber}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText id="phoneNumberInput" value="#{uitem.phoneNumber}"
+									style="width:100%" />
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+
+					<p:column headerText="Acciones">
+						<p:rowEditor />
+					</p:column>
+				</p:dataTable>
+
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<p:button class="btn btn-default" icon="ui-icon-plus"
+							value="Nuevo" outcome="userAdd" />
+						<p:commandButton class="btn btn-default" icon="ui-icon-trash"
+							value="Eliminar" id="deleteUserIcon"
+							actionListener="#{userBeanList.deleteUser}" update="evobject users :users:msgs" >
+						</p:commandButton>
+					</div>
+				</div>
+			</h:form>
+		</div>
+		
+		<c:set var="selectedUserID" value="#{userBeanList.selectedUser.userId}" />
+		
+		<div class="container">
+			<h:form id="evobject" method="post" rendered="#{!userBeanList.isShowMore()}">
+			<p:growl id="msgs" />
+				<h3 class="form-signin-heading"><h:outputLabel id="userIDOutputLabel" value="Lista de Objetos Medibles para el usuario de ID: #{selectedUserID}" /></h3>
+				<hr></hr>
+				<p:dataTable id="measurableObjects" 
+					value="#{userBeanList.listUserMeasurableObjects}" 
+					var="moitem" 
+					tableStyle="table-layout: auto;" 
+					rows="10"
+					paginator="true" 
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15" 
+					selection="#{userBeanList.selectedUserMeasurableObject}"
+					rowKey="#{moitem.getMeasurableObjectID()}"
+					widgetVar="mo"
+					emptyMessage="No hay objetos medibles asociados al usuario seleccionado.">
+					
+					<p:column selectionMode="single"
+						style="width:40px; text-align:center" />
+
+					<p:column headerText="URL" sortBy="#{moitem.measurableObjectURL}">
+						<h:outputText value="#{moitem.measurableObjectURL}" />
+					</p:column>		
+				</p:dataTable>
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<!--  <p:button class="btn btn-default" icon="ui-icon-plus"
+							value="Asociar" outcome="userMeasurableObjectAdd" > 
+						</p:button>-->
+						
+						<p:commandButton class="btn btn-default" icon="ui-icon-plus"
+							value="Asociar" id="showMoreUser"
+							actionListener="#{userBeanList.showMore}" 
+							update="@all"/>
+							
+						<p:commandButton class="btn btn-default" icon="ui-icon-trash"
+							value="Remover" id="removeUserIcon"
+							actionListener="#{userBeanList.removeUserMeasurableObject}" update="evobject :evobject:msgs" >
+						</p:commandButton>
+					</div>
+				</div>
+			</h:form>
+		</div>
+		
+		
+		<!-- Second Page -->
+		<div class="container">
+			<h:form id="objectUser" class="form-signin" method="post" rendered="#{userBeanList.isShowMore()}">
+				<h2 class="form-signin-heading">Asociar Objeto Medible a Usuario</h2>
+				<p:growl id="msgs" />
+				<h3 class="form-signin-heading">
+					<h:outputLabel id="userIDOutputLabel"
+						value="Lista de objetos medibles para el usuario seleccionado" />
+				</h3>
+				<p:panel id="panel" class="panel panel-default">
+					<label for="inputType">URL</label>
+					<br></br>
+					<h:selectOneMenu
+						value="#{userBeanList.userMeasurableObject}"
+						converter="omnifaces.SelectItemsConverter" style="width:100%">
+						<f:selectItem itemLabel="Seleccione un objeto medible"
+							noSelectionOption="false" />
+						<f:selectItems
+							value="#{userBeanList.listUserMeasurableObjectsToAdd}"
+							var="ug" itemLabel="#{ug.measurableObjectURL}" />
+					</h:selectOneMenu>
+				</p:panel>
+
+				<div class="panel panel-default">
+					<div class="panel-body">
+					
+						<p:commandButton class="btn btn-default" icon="ui-icon-disk"
+							value="Guardar" id="saveUserIcon"
+							actionListener="#{userBeanList.save}"
+							update="objectUser :objectUser:msgs">
+						</p:commandButton>
+						
+						<p:commandButton class="btn btn-default" icon="ui-icon-circle-arrow-w"
+							value="Volver" id="backUser"
+							actionListener="#{userBeanList.showLess}" 
+							update="@all"/>
+							
+					</div>
+				</div>
+				
+			</h:form>
+		</div>
+
+	</h:body>
+</f:view>
+</html>

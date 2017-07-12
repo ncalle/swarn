@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:jsf="http://xmlns.jcp.org/jsf"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+<f:view contentType="text/html">
+	<h:head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Evaluaciones</title>
+
+		<link rel="stylesheet"
+			href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" />
+		<link href="./css/form_list.css" rel="stylesheet" />
+	</h:head>
+
+	<h:body>
+
+		<nav
+			class="navbar navbar-static-top navbar-dark bg-inverse navbar-inverse">
+			<a class="navbar-brand" href="#">GeoServiceQuality</a>
+			<ul class="nav navbar-nav">
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/home.xhtml">Home</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/measurableObjectList.xhtml">Objetos
+						Medibles</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/profileList.xhtml">Perfiles</a></li>
+				<li class="nav-item active"><a class="nav-link"
+					href="${request.contextPath}/evaluationList.xhtml">Evaluaciones<span
+						class="sr-only">(current)</span></a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/reports.xhtml">Reportes</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/userList.xhtml">Usuarios</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/qualityModelList.xhtml">Modelo de
+						Calidad</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/about.xhtml">Acerca</a></li>
+
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+				<li><a href="${request.contextPath}/logoutServlet"><span
+						class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+			</ul>
+		</nav>
+
+		<div class="container" rendered="#{!evaluationBeanList.isShowResult()}">
+		
+			<h:form method="post" rendered="#{!evaluationBeanList.isShowResult()}">		
+				<h2 class="form-signin-heading">Evaluaciones</h2>
+				<hr></hr>
+			</h:form>
+			
+			<div class="ui-g">
+			    <div class="ui-g-6">
+			    
+					<h:form id="profiles" method="post" rendered="#{!evaluationBeanList.isShowResult()}">			
+						<p:growl id="msgs" />
+						<h4 class="form-signin-heading">Seleccione un Perfil con el	cual realizar la evaluación.</h4>
+						<p:dataTable id="profiles" 
+							value="#{evaluationBeanList.listProfile}"
+							var="pitem" 
+							tableStyle="table-layout: auto;"
+							selection="#{evaluationBeanList.selectedProfile}"
+							rowKey="#{pitem.getProfileId()}" 
+							style="margin-bottom:40"
+							widgetVar="p"
+							emptyMessage="No existen perfiles.">
+									
+							<p:ajax event="rowSelectRadio" listener="#{evaluationBeanList.onRowSelectProfile}" update=":profileMetrics:profileMetrics :evobject:measurableObjects :treeStructureSelectedObject:stnDataTable :evobject:measurableObjects"/>
+		
+							<p:column selectionMode="single"
+								style="width:40px; text-align:center" />
+		
+							<p:column headerText="ID" sortBy="#{pitem.profileId}">
+								<h:outputText value="#{pitem.profileId}" />
+							</p:column>
+		
+							<p:column headerText="Nombre" sortBy="#{pitem.name}">
+								<h:outputText value="#{pitem.name}" />
+							</p:column>
+		
+							<p:column headerText="Granuralidad" sortBy="#{pitem.granurality}">
+								<h:outputText value="#{pitem.granurality}" />
+							</p:column>
+		
+							<p:column headerText="Ponderado" sortBy="#{pitem.isWeightedFlag}">
+								<h:outputText value="#{pitem.isWeightedFlag}" />
+							</p:column>
+						</p:dataTable>
+					</h:form>
+			    </div>	
+			
+				<div class="ui-g-6">
+				
+					<h:form id="profileMetrics" method="post" rendered="#{!evaluationBeanList.isShowResult()}">
+					<p:growl id="msgs" />
+						<h4 class="form-signin-heading">Lista de Métricas disponibles para el Perfil seleccionado.</h4>
+						<p:dataTable id="profileMetrics" 
+							value="#{evaluationBeanList.listProfileMetric}" 
+							var="pmitem" 
+							tableStyle="table-layout: auto;"
+							widgetVar="pm"
+							emptyMessage="El perfil seleccionado no tiene métricas asociadas.">
+								
+							<p:column headerText="Métrica" sortBy="#{pmitem.getMetricName()}">
+								<h:outputText value="#{pmitem.getMetricName()}" />
+							</p:column>
+							
+							<p:column headerText="Unidad" sortBy="#{pmitem.getUnitName()}">
+								<h:outputText value="#{pmitem.getUnitName()}" />
+							</p:column>		
+						</p:dataTable>		
+					</h:form>
+				
+				</div>
+			</div>
+		</div>	
+		
+		<div class="container">
+		
+			<h:form id="headingMessage" rendered="#{!evaluationBeanList.isShowResult()}">
+				<br></br>
+				<br></br>
+				<h4 class="form-signin-heading">Seleccione un Objeto Medible a ser evaluado.</h4>
+				<hr></hr>
+			</h:form>
+		
+			<div class="ui-g">
+	    		<div class="ui-g-4">
+	    			<h:form id="idesTreeStructure" rendered="#{!evaluationBeanList.isShowResult()}">						
+					    <h4 class="form-signin-heading">Árbol de objetos medibles</h4>				    						
+					    <p:tree value="#{evaluationBeanList.root}" 
+					    	var="node" 
+					    	selectionMode="single"
+		                	selection="#{evaluationBeanList.selectedNode}">
+		                	
+		                	<p:ajax event="select" listener="#{evaluationBeanList.onNodeSelect}" update=":evobject :treeStructureSelectedObject" />
+					        
+					        <p:treeNode>
+					            <h:outputText value="#{node}" />
+					        </p:treeNode>
+					        
+					    </p:tree>		
+					</h:form>					
+				</div>
+				
+	    		<div class="ui-g-8">
+	    			<h:form id="treeStructureSelectedObject" method="post" rendered="#{!evaluationBeanList.isShowResult()}">
+						<p:growl id="msgs" />
+						<h4 class="form-signin-heading">IDE/Institución/Nodo</h4>
+						<p:dataTable id="stnDataTable" 
+							value="#{evaluationBeanList.selectedTreeNode}" 
+							var="stn"
+							tableStyle="table-layout: auto;" 
+							rowKey="#{stn.getMeasurableObjectID()}" 
+							widgetVar="stnw" 
+							emptyMessage="No existe objecto medible o no ha seleccionado un perfil y/o un objeto del árbol.">	
+		
+							<p:column selectionMode="single"
+								style="width:40px; text-align:center" rendered="#{evaluationBeanList.profileGranularity=='High'}" />	
+		
+							<p:column headerText="ID" sortBy="#{stn.getMeasurableObjectID()}">
+								<h:outputText value="#{stn.getMeasurableObjectID()}" />
+							</p:column>
+
+							<p:column headerText="Nombre" sortBy="#{stn.measurableObjectName}">
+								<h:outputText value="#{stn.measurableObjectName}" />
+							</p:column>
+
+							<p:column headerText="Descripción" sortBy="#{stn.measurableObjectDescription}">
+								<h:outputText value="#{stn.measurableObjectDescription}" />
+							</p:column>
+
+						</p:dataTable>
+						<br></br>
+					</h:form>
+		
+					<h:form id="evobject" method="post" rendered="#{!evaluationBeanList.isShowResult()}">
+						<p:growl id="msgs" />
+						<h4  class="space"></h4>				
+						<h4 class="form-signin-heading">Servicios/Capas.</h4>
+						<p:dataTable id="measurableObjects" 
+							value="#{evaluationBeanList.listMeasurableObjectsToShow}" 
+							var="moitem" 
+							tableStyle="table-layout: auto;" 
+							selection="#{evaluationBeanList.selectedMeasurableObject}"
+							rowKey="#{moitem.getMeasurableObjectID()}"
+							style="margin-bottom:40" 
+							rows="10" 
+							paginator="true"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="10,25,50"					
+							widgetVar="mo"
+							emptyMessage="No existe objecto medible o no ha seleccionado un perfil y/o un objeto del árbol.">
+						    		
+							<p:column selectionMode="single"
+								style="width:40px; text-align:center" rendered="#{evaluationBeanList.profileGranularity=='Low'}" />
+		
+							<p:column headerText="ID" sortBy="#{moitem.measurableObjectID}">
+								<h:outputText value="#{moitem.measurableObjectID}" />
+							</p:column>
+							<p:column headerText="Descripción" sortBy="#{moitem.measurableObjectDescription}">
+								<h:outputText value="#{moitem.measurableObjectDescription}" />
+							</p:column>
+							<p:column headerText="Tipo" sortBy="#{moitem.entityType}">
+								<h:outputText value="#{moitem.entityType}" />
+							</p:column>
+							<p:column headerText="Tipo de Servicio" sortBy="#{moitem.measurableObjectServicesType}">
+								<h:outputText value="#{moitem.measurableObjectServicesType}" />				
+							</p:column>
+							<p:column headerText="URL" sortBy="#{moitem.measurableObjectURL}">
+								<a href="#{moitem.measurableObjectURL}">Link al Servicio</a>
+							</p:column>
+			
+						</p:dataTable>
+		
+						<hr border="none" color="#ffffff"></hr>
+		
+						<div class="panel panel-default">
+							<h:commandButton id="evaluate" value="Evaluar" action="#{evaluationBeanList.evaluate()}" class="btn btn-lg btn-primary btn-block" />
+						</div>
+						
+						
+						
+						<!-- Evaluacion manual -->
+						<p:dialog id="dialogID" widgetVar="myDialogVar" header="Atención" modal="true" visible="true" 
+							 rendered="#{evaluationBeanList.isShowConfirm()}"	>
+						    <h:outputText value="La evaluación requiere que el usuario responda la siguiente pregunta"/> <br></br>
+						    <h:outputText value="¿Considera que el objeto medible seleccionado cuenta con errores descriptivos?" /> <br></br><br></br>
+						    <div align="center">
+						    	<p:commandButton value="Si" actionListener="#{evaluationBeanList.confirmationPositive()}" update="@all" />
+		    					<p:commandButton value="No" actionListener="#{evaluationBeanList.confirmationNegative()}" update="@all" />
+		    				</div>
+						</p:dialog>
+						
+					</h:form>
+				</div>
+			
+			
+
+				<h:form id="evaluation" method="post" rendered="#{evaluationBeanList.isShowResult()}">
+					<p:growl id="msgs" />
+					<h3 class="form-signin-heading">Resultado de la evaluación general del perfil:</h3>
+					<h:outputText class="result" value="#{evaluationBeanList.profileResult}" />
+					<br></br>
+					<h:outputText class="result" value="#{evaluationBeanList.profileQualityResult}"  
+					rendered="#{evaluationBeanList.selectedProfile.isWeightedFlag}"/>
+					
+					<hr></hr>
+					<h3 class="form-signin-heading">Detalle de la evaluación realizada:</h3>
+					<p:dataTable id="evaluation"
+						value="#{evaluationBeanList.listEvaluation}" var="eitem"
+						tableStyle="table-layout: auto;"
+						widgetVar="ev" rows="10"
+						paginator="true"
+						emptyMessage="No existen resultados.">
+						
+						<p:column headerText="Ide/Institución/Nodo" sortBy="#{eitem.entityType}">
+							<h:outputText value="#{eitem.entityType}" />
+						</p:column>
+						
+						<p:column headerText="Desripción del Servicio" sortBy="#{eitem.metricName}">
+							<h:outputText value="#{eitem.measurableObjectName}" />
+						</p:column>
+	
+						<p:column headerText="Metrica" sortBy="#{eitem.metricName}">
+							<h:outputText value="#{eitem.metricName}" />
+						</p:column>
+						
+						<p:column headerText="Modelo" sortBy="#{eitem.qualityModelName}">
+							<h:outputText value="#{eitem.qualityModelName}" />
+						</p:column>
+	
+						<p:column headerText="Perfil" sortBy="#{eitem.profileName}">
+							<h:outputText value="#{eitem.profileName}" />
+						</p:column>
+						
+						<p:column headerText="Indice de calidad" sortBy="#{eitem.qualityIndex}" 
+							rendered="#{evaluationBeanList.selectedProfile.isWeightedFlag}">
+							<h:outputText value="#{eitem.qualityIndex}" />
+						</p:column>
+						
+						<p:column headerText="Fecha" sortBy="#{eitem.startDate}">
+							<h:outputText value="#{eitem.startDate}" />
+						</p:column>
+	
+						<p:column headerText="Completa" sortBy="#{eitem.isEvaluationCompleted}">
+							<h:outputText value="#{eitem.isEvaluationCompleted}" />
+						</p:column>
+	
+						<p:column headerText="Resultado" sortBy="#{eitem.success}">
+							<h:outputText value="#{eitem.success}" />
+						</p:column>
+						
+						
+					</p:dataTable>
+					
+					<hr></hr>
+					<div class="panel panel-default">
+						<h:commandButton id="back" value="Volver" action="#{evaluationBeanList.setBackState(false)}"
+							class="btn btn-lg btn-primary btn-block" />
+					</div>
+				</h:form>
+			</div>
+		</div>
+		
+	</h:body>
+</f:view>
+</html>

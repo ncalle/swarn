@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:jsf="http://xmlns.jcp.org/jsf"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:c="http://java.sun.com/jstl/core">
+<f:view contentType="text/html">
+	<h:head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Datos de Usuarios</title>
+
+		<link rel="stylesheet"
+			href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" />
+		<link href="./css/form_list.css" rel="stylesheet" />
+	</h:head>
+
+	<h:body>
+		<nav
+			class="navbar navbar-static-top navbar-dark bg-inverse navbar-inverse">
+			<a class="navbar-brand" href="#">GeoServiceQuality</a>
+			<ul class="nav navbar-nav">
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/home.xhtml">Home</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/measurableObjectList.xhtml">Objetos Medibles</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/profileList.xhtml">Perfiles</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/evaluationList.xhtml">Evaluaciones</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/reports.xhtml">Reportes</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/userList.xhtml">Usuarios</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/qualityModelList.xhtml">Modelo de Calidad</a></li>						
+				<li class="nav-item active"><a class="nav-link"
+					href="${request.contextPath}/about.xhtml">Acerca<span
+						class="sr-only">(current)</span></a></li>
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+				<li><a href="${request.contextPath}/logoutServlet"><span
+						class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+			</ul>
+		</nav>
+
+		<div class="container">
+			<h:form id="form">           
+			    <p:growl id="msgs" showDetail="true" />
+			 
+			    <h3 style="margin-top:0">Acerca</h3>
+			    
+			    <hr></hr>
+			    
+			    <p:accordionPanel>
+			        <p:tab title="Home">
+			            <h:panelGrid columns="1" cellpadding="10">
+			                <p> 
+			                
+			                	<h4>En el Home se podrá encontrar una serie de información útil para el usuario, conteniendo los siguientes elementos.</h4>
+				                
+				                <dt>Servicios Destacados</dt>
+	    						<dd>- Lista los cinco mejores Servicios que han sido evaluados hasta el momento, en términos de disponibilidad.</dd>
+								<dd>- Lista los cinco peores Servicios que han sido evaluados hasta el momento, en términos de disponibilidad.</dd>
+								
+								<br></br>
+								
+								<dt>Gráficos</dt>
+	    						<dd>- Éxitos vs Fracasos. Muestra en cantidades porcentuales el total de evaluaciones con resultado exitoso contra el porcentaje de evaluaciones con resultado fallido.</dd>
+								<dd>- Éxitos por Perfil. Muestra el porcentaje de éxitos que se han obtenido hasta el momento, evaluando los distintos Perfiles existentes.</dd>
+								<dd>- Tiempo medio de respuesta. Muestra el tiempo de respuesta medio de los últimas 100 evaluaciones realizadas para los distintos Nodos.</dd>
+								
+								<br></br>
+								
+								<dt>Resumen de Evaluaciones</dt>
+	    						<dd>- Muestra datos de las evaluaciones realizadas hasta el momento, de forma resumida. Listando datos del Perfil, Objeto evaluado así como datos sobre el resultado obtenido.</dd>
+	    									                	
+			                </p>
+			            </h:panelGrid>
+			        </p:tab>
+			        <p:tab title="Objetos Medibles">
+			            <h:panelGrid columns="1" cellpadding="10">
+			                <p> 
+			                
+			                	<h4>En Objetos Medibles es donde se realiza la Alta, Baja y Modificación de los Objetos que pueden ser evaluados.</h4>
+				                
+				                <dt>Alta, Baja y Modificación de Objeto</dt>
+	    						<dd>- Al presionar el botón "Nuevo" se procede a la página para realizar el Alta de un Objeto.</dd>
+								<dd>- Para dar de Baja un Objeto Medible, se debe primero seleccionar el Objeto en cuestión utilizando el radio button disponible. Seguidamente presionar el botón "Eliminar".</dd>
+								<dd>- Para Modificar un Objeto Medible, se debe presionar sobre el lápiz mostrado en la columna de "Acciones" del Objeto que se desea modificar. Seguidamente se habilitaran los campos editables. Una vez terminada la edición, presionar sobre el icono de check. </dd>
+	    									                	
+			                </p>
+			            </h:panelGrid>
+			        </p:tab>
+			        <p:tab title="Perfiles">
+			            <h:panelGrid columns="1" cellpadding="10">
+			                <p> 
+			                
+			                	<h4>En Perfiles es donde se realiza la Alta, Baja y Modificación de los Perfiles disponibles en el sistema. Contiene las siguientes funcionalidades.</h4>
+				                
+				                <dt>Alta, Baja y Modificación de Perfil</dt>
+	    						<dd>- Al presionar el botón "Nuevo" se procede a la página para realizar el Alta de un Perfil. Dependiendo de la granularidad seleccionada, es la lista de Métricas que se podrán seleccionar para el Perfil. Nota: Se crean valores de rangos por defecto para las Métricas seleccionadas. Estos valores pueden ser editados. </dd>
+								<dd>- Para dar de Baja un Perfil, se debe primero seleccionar el Perfil en cuestión utilizando el radio button disponible. Seguidamente presionar el botón "Eliminar".</dd>
+								<dd>- Para Modificar un Perfil, se debe presionar sobre el lápiz mostrado en la columna de "Acciones" del Perfil que se desea modificar. Seguidamente se habilitaran los campos editables. Una vez terminada la edición, presionar sobre el icono de check. </dd>
+								
+								<br></br>
+								
+								<h5>Al seleccionar un Perfil, debajo se listan las Métricas asociadas al mismo. Pudiendo asociar nuevas Métricas al Perfil, remover las Métricas ya existentes en el Perfil o modificar sus valores de Rango.</h5>
+								
+								<br></br>
+								
+				                <dt>Lista de Métricas disponibles para el Perfil seleccionado</dt>
+	    						<dd>- Luego de seleccionar un Perfil, es posible asociarle nuevas Métricas presionando el botón "Asociar". Luego se debe indicar que Métrica asociar. </dd>
+								<dd>- Luego de seleccionar un Perfil, es posible remover alguna de las Métricas asociadas al Perfil seleccionando la Métrica en cuestión y presionando el botón "Remover". </dd>
+								<dd>- Luego de seleccionar un Perfil, es posible modificar los valores de Rango al presionar sobre el lápiz debajo de la columna de "Acciones" en alguna de la lista de Métricas mostradas. Luego de modificado el valor, presionar el botón de check. </dd>								
+	    									                	
+			                </p>
+			            </h:panelGrid>
+			        </p:tab>
+			   		<p:tab title="Evaluaciones">
+			            <h:panelGrid columns="1" cellpadding="10">
+			                <p> 
+			                
+			                	<h4>En Evaluaciones es donde el Usuario del sistema realizará las evaluaciones de los Objetos Medibles. En esta pantalla se muestran tres datos relevantes para realizar la evaluación.</h4>
+				                
+				                <dt>Perfil con el cual realizar la evaluación.</dt>
+	    						<dd>- Para toda evaluación se debe primero seleccionar el Perfil con el cual se desea llevar a cabo dicha evaluación. Sin esto no es posible realizarla. </dd>
+																
+								<br></br>
+								
+				                <dt>Métricas disponibles para el Perfil seleccionado</dt>
+	    						<dd>- A modo informativo, se muestran las Métricas disponibles en el Perfil seleccionado. </dd>						
+								
+								<br></br>
+								
+				                <dt>Objeto Medible a ser evaluado</dt>
+	    						<dd>- Además del Perfil, se debe seleccionar el Objeto Medible que se desea evaluar. </dd>
+	    						
+	    						<br></br>
+	    						
+	    						<h5>Una vez seleccionado ambos datos (Perfil y Objeto), proseguir a presionar el botón "Evaluar".</h5>
+	    						<h5>Consecuentemente, se mostrará el porcentaje de éxito obtenido al efectuar la evaluación de cada Métrica asociada al Perfil de evaluación y debajo el detalle de la Evaluación realizada.</h5>
+	    									                	
+			                </p>
+			            </h:panelGrid>
+			        </p:tab>
+			        
+			        <p:tab title="Reportes">
+			            <h:panelGrid columns="1" cellpadding="10">
+			            	<p>    
+			                	<h4>En Reportes se encuentran una serie de datos, listados y reportes que le podrán aportar valor al Usuario al momento de realizar un análisis sobre la calidad de los servicios evaluados.</h4>
+			                	<h4>Contiene los siguientes elementos.</h4>
+				                
+				                <dt>Total de evaluaciones realizadas por Métrica.</dt>
+	    						<dd>- Muestra el número total de evaluaciones realizadas hasta el momento, discriminado por Métricas.</dd>
+								
+								<br></br>
+								
+								<dt>Total de Servicios Geográficos disponibles por Institución.</dt>
+	    						<dd>- Muestra el número de Servicios disponibles en el sistema, discriminado por Institución.</dd>
+								
+								<br></br>
+								
+								<dt>Gráficos</dt>
+	    						<dd>- Éxitos vs Fracasos. Muestra en cantidades porcentuales el total de evaluaciones con resultado exitoso contra el porcentaje de evaluaciónes con resultado fallido.</dd>
+								<dd>- Éxitos por Perfil. Muestra el porcentaje de éxitos que se han obtenido hasta el momento, evaluando los distintos Perfiles existentes.</dd>
+								<dd>- Éxitos por Institución. Muestra el porcentaje de éxitos que se han obtenido hasta el momento, evaluando los Objetos Medibles pertenecientes a cada Institución.</dd>
+								<dd>- Éxitos por Nodo. Muestra el porcentaje de éxitos que se han obtenido hasta el momento, evaluando los Objetos Medibles pertenecientes a cada Nodo.</dd>
+								<dd>- Tiempo medio de respuesta. Muestra el tiempo de respuesta medio de los últimas 100 evaluaciones realizadas para los distintos Nodos.</dd>
+	    									                	
+			                </p>
+			            </h:panelGrid>
+			        </p:tab>
+			        
+			        <p:tab title="Usuarios">
+			            <h:panelGrid columns="1" cellpadding="10">
+			                <p> 
+			                
+			                	<h4>En Usuario es donde se realiza la Alta, Baja y Modificación de los Usuarios del sistema. Contiene las siguientes funcionalidades.</h4>
+				                
+				                <dt>Alta, Baja y Modificación de Usuario</dt>
+	    						<dd>- Al presionar el botón "Nuevo" se procede a la página para realizar el Alta de un Usuario. Los permisos que el usuario disponga depende directamente del "Tipo" de Usuario elegido. </dd>
+								<dd>- Para dar de Baja un Usuario, se debe primero seleccionar el Usuario en cuestión utilizando el radio button disponible. Seguidamente presionar el botón "Eliminar".</dd>
+								<dd>- Para Modificar un Usuario, se debe presionar sobre el lápiz mostrado en la columna de "Acciones" del Usuario que se desea modificar. Seguidamente se habilitaran los campos editables. Una vez terminada la edición, presionar sobre el icono de check. </dd>
+								
+								<br></br>
+								
+								<h5>Al seleccionar un Usuario, debajo se listan los Objetos Medibles asociados al mismo. Pudiendo asociar nuevas Objetos al Usuario o remover los Objetos ya asociados al Usuario.</h5>
+								
+								<br></br>
+								
+				                <dt>Lista de Objetos Medibles disponibles para el Usuario seleccionado</dt>
+	    						<dd>- Luego de seleccionar un Usuario, es posible asociarle nuevos Objetos Medibles presionando el botón "Asociar". Luego se debe indicar que Objeto asociar. </dd>
+								<dd>- Luego de seleccionar un Perfil, es posible remover alguno de los Objetos Medibles asociadas al Usuario seleccionando el Objeto en cuestión y presionando el botón "Remover". </dd>						
+	    									                	
+			                </p>
+			            </h:panelGrid>
+			        </p:tab>
+			        
+			        <p:tab title="Modelos de Calidad">
+			            <h:panelGrid columns="1" cellpadding="10">
+			                <p> 
+			                
+			                	<h4>Aquí se podrá visualizar la forma y contenido del Modelo o los Modelos existentes en el sistema.</h4>
+								<h5>Se listan los Modelos existentes, sus Dimensiones, Factores y Métricas así como otros detalles de los mismos.</h5>					
+	    									                	
+			                </p>
+			            </h:panelGrid>
+			        </p:tab>
+			    </p:accordionPanel>
+			    
+			</h:form>
+		</div>
+
+	</h:body>
+</f:view>
+</html>

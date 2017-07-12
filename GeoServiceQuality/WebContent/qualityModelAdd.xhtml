@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:jsf="http://xmlns.jcp.org/jsf"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions">
+
+<f:view contentType="text/html">
+	<h:head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Ingresar modelo de calidad</title>
+
+		<link rel="stylesheet"
+			href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" />
+		<link href="./css/form_add.css" rel="stylesheet" />
+	</h:head>
+
+	<h:body>
+		<nav
+			class="navbar navbar-static-top navbar-dark bg-inverse navbar-inverse">
+			<a class="navbar-brand" href="#">GeoServiceQuality</a>
+			<ul class="nav navbar-nav">
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/home.xhtml">Home</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/measurableObjectList.xhtml">Objetos
+						Medibles</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/profileList.xhtml">Perfiles</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/evaluationList.xhtml">Evaluaciones</a>
+				</li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/reports.xhtml">Reportes</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/userList.xhtml">Usuarios</a></li>
+				<li class="nav-item active"><a class="nav-link"
+					href="${request.contextPath}/qualityModelList.xhtml">Modelo de
+						Calidad<span class="sr-only">(current)</span></a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/about.xhtml">Acerca</a></li>
+
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+				<li><a href="${request.contextPath}/logoutServlet"><span
+						class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+			</ul>
+		</nav>
+
+
+		<div class="container">
+
+			<h:form id="qModel" class="form-signin" method="post">
+				<p:growl id="msgs" />
+				<h2 class="form-signin-heading">Agregar modelo de calidad</h2>
+				<p:panel id="panel" class="panel panel-default">
+				
+					<label for="inputEntityType">Tipo de entidad</label>
+					<br></br>
+					<h:selectOneMenu value="#{qualityModelBeanAdd.entityType}" style="width:100%" >
+						<f:selectItem itemValue="Selecione un tipo de entidad" itemLabel="Selecione un tipo de entidad" />
+						<f:selectItem itemValue="Model" itemLabel="Modelo" />
+						<f:selectItem itemValue="Dimension" itemLabel="Dimensión" />
+						<f:selectItem itemValue="Factor" itemLabel="Factor" />
+						<f:selectItem itemValue="Metric" itemLabel="Métrica" />
+						<f:ajax render="@form" />
+					</h:selectOneMenu>
+					
+					<br></br>
+					<br></br>
+					
+					<h:panelGroup id="model" rendered="#{qualityModelBeanAdd.entityType == 'Model'}" >
+						<label for="inputModelName" class="sr-only">Nombre</label>
+						<h:inputText id="ideM"
+							value="#{qualityModelBeanAdd.modelName}" 
+							class="form-control"
+							a:placeholder="Nombre" 
+							required="required" />
+					</h:panelGroup>	
+					
+					<h:panelGroup id="dim" rendered="#{qualityModelBeanAdd.entityType == 'Dimension'}">
+						
+						<label for="inputDim">Modelo al cual pertenece la dimensión</label>			    		
+				    	<h:selectOneMenu value="#{qualityModelBeanAdd.dimensionModel}"
+							converter="omnifaces.SelectItemsConverter" style="width:100%">
+							<f:selectItem itemLabel="Seleccione un modelo" noSelectionOption="false" />
+							<f:selectItems value="#{qualityModelBeanAdd.listModel}" var="lm" itemLabel="#{lm.elementName}" />
+						</h:selectOneMenu>
+						
+						<br></br>
+						<br></br>
+						
+						<label for="inputDimensionName" class="sr-only">Nombre</label>
+						<h:inputText id="dimensionN"
+							value="#{qualityModelBeanAdd.dimensionName}" 
+							class="form-control"
+							a:placeholder="Nombre" 
+							required="required" />
+					</h:panelGroup>
+					
+					<h:panelGroup id="factor" rendered="#{qualityModelBeanAdd.entityType == 'Factor'}">
+
+						<label for="inputFactor">Dimensión a la cual pertenece el factor</label>
+						<br></br>
+				    	<h:selectOneMenu value="#{qualityModelBeanAdd.factorDimension}"
+							converter="omnifaces.SelectItemsConverter" style="width:100%">
+							<f:selectItem itemLabel="Seleccione una dimensión" noSelectionOption="false" />
+							<f:selectItems value="#{qualityModelBeanAdd.listDimension}" var="ldim" itemLabel="#{ldim.elementName}" />
+						</h:selectOneMenu>
+						
+						<br></br>
+						<br></br>
+						
+						<label for="inputFactorName" class="sr-only">Nombre</label>
+						<h:inputText id="nodeN"
+							value="#{qualityModelBeanAdd.factorName}" 
+							class="form-control"
+							a:placeholder="Nombre" 
+							required="required" />
+					</h:panelGroup>	
+					
+					<h:panelGroup id="layer" rendered="#{qualityModelBeanAdd.entityType == 'Metric'}">
+
+						<label for="inputMetric">Factor al cual pertenece la métrica</label>
+						<br></br>
+				    	<h:selectOneMenu value="#{qualityModelBeanAdd.metricFactor}"
+							converter="omnifaces.SelectItemsConverter" style="width:100%" >
+							<f:selectItems value="#{qualityModelBeanAdd.listFactor}" var="lf" itemLabel="#{lf.elementName}" />
+						</h:selectOneMenu>
+						
+						<br></br>
+						<br></br>
+						
+						<label for="inputEntityType">Unidad</label>
+						<br></br>
+						<h:selectOneMenu value="#{qualityModelBeanAdd.metricUnitID}" style="width:100%">
+							<f:selectItem itemValue="1" itemLabel="Boleano" />
+							<f:selectItem itemValue="2" itemLabel="Porcentaje" />
+							<f:selectItem itemValue="3" itemLabel="Milisegundos" />
+							<f:selectItem itemValue="4" itemLabel="Basico-Intermedio-Completo" />
+							<f:selectItem itemValue="5" itemLabel="Entero" />
+						</h:selectOneMenu>
+						<br></br>
+						<br></br>
+						
+						<label for="inputType">Granularidad</label>
+						<br></br>
+						<h:selectOneMenu value="#{qualityModelBeanAdd.metricGranularity}" style="width:100%" >
+							<f:selectItem itemValue="Ide" itemLabel="Ide"/>
+							<f:selectItem itemValue="Institución" itemLabel="Institución"/>
+							<f:selectItem itemValue="Nodo" itemLabel="Nodo"/>
+							<f:selectItem itemValue="Capa" itemLabel="Capa"/>
+							<f:selectItem itemValue="Servicio" itemLabel="Servicio"/>
+							<f:selectItem itemValue="Método" itemLabel="Método"/>
+						</h:selectOneMenu>
+						<br></br>
+						<br></br>
+						
+						<p:selectBooleanCheckbox value="#{qualityModelBeanAdd.metricIsAggregation}" />
+						<label for="inputType">Agregación</label>
+						<br></br>
+						<br></br>
+						
+						<label for="inputMetricName" class="sr-only">Nombre</label>
+						<h:inputText id="metricN"
+							value="#{qualityModelBeanAdd.metricName}" 
+							class="form-control"
+							a:placeholder="Nombre" 
+							required="required" />
+						<br></br>
+						<br></br>
+						
+						<label for="inputMetricDescription" class="sr-only">Descripción</label>
+						<h:inputText id="metricD"
+							value="#{qualityModelBeanAdd.metricDescription}" 
+							class="form-control"
+							a:placeholder="Descripción" 
+							required="required"/>
+						<br></br>
+						<br></br>
+													
+					    <p:fileUpload fileUploadListener="#{qualityModelBeanAdd.handleFileUpload}" 
+					    	   mode="advanced" 
+					    	   dragDropSupport="false"
+					           update="messages" 
+					           allowTypes="/(\.|\/)(jar)$/"
+					           label="Método"
+					           uploadLabel="Subir"
+					           cancelLabel="Cancelar"
+					           invalidFileMessage="Solo se permiten archivos de tipo Jar" />
+					    <p:growl id="messages" showDetail="true" />											
+					</h:panelGroup>												
+				</p:panel>	
+
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<p:commandButton class="btn btn-default" icon="ui-icon-disk"
+							value="Guardar" id="save"
+							actionListener="#{qualityModelBeanAdd.save()}"
+							update="qModel :qModel:msgs">
+						</p:commandButton>
+						<p:button class="btn btn-default" icon="ui-icon-circle-arrow-w"
+							value="Volver" outcome="qualityModelList" />
+						<p:commandButton class="btn btn-default" icon="ui-icon-refresh"
+							value="Reset" update="qModel" process="@this">
+							<p:resetInput target="qModel" />
+						</p:commandButton>
+					</div>
+				</div>
+
+			</h:form>
+
+		</div>
+
+		<script src="../../assets/js/vendor/jquery.min.js"></script>
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.2.0/js/tether.min.js"></script>
+		<script src="../../dist/js/bootstrap.min.js"></script>
+		<script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+
+	</h:body>
+</f:view>
+</html>

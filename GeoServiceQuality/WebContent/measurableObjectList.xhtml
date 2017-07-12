@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:jsf="http://xmlns.jcp.org/jsf"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions">
+<f:view contentType="text/html">
+	<h:head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Objetos Medibles</title>
+
+		<link rel="stylesheet"
+			href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" />
+		<link href="./css/form_list.css" rel="stylesheet" />
+	</h:head>
+
+	<h:body>
+
+		<nav
+			class="navbar navbar-static-top navbar-dark bg-inverse navbar-inverse">
+			<a class="navbar-brand" href="#">GeoServiceQuality</a>
+			<ul class="nav navbar-nav">
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/home.xhtml">Home</a></li>
+				<li class="nav-item active"><a class="nav-link"
+					href="${request.contextPath}/measurableObjectList.xhtml">Objetos Medibles<span class="sr-only">(current)</span>
+				</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/profileList.xhtml">Perfiles</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/evaluationList.xhtml">Evaluaciones</a>
+				</li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/reports.xhtml">Reportes</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/userList.xhtml">Usuarios</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/qualityModelList.xhtml">Modelo de Calidad</a>
+				</li>
+				<li class="nav-item"><a class="nav-link"
+					href="${request.contextPath}/about.xhtml">Acerca</a></li>
+
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+				<li><a href="${request.contextPath}/logoutServlet"><span
+						class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+			</ul>
+		</nav>
+
+		<div class="container">
+		
+			<div class="ui-g">
+	    		<div class="ui-g-4">
+	    			<h:form id="idesTreeStructure">
+						
+					    <h2 class="form-signin-heading">Árbol de objetos medibles</h2>
+
+   						<hr></hr>
+					    						
+					    <p:tree value="#{measurableObjectBeanList.root}" 
+					    	var="node" 
+					    	selectionMode="single"
+		                	selection="#{measurableObjectBeanList.selectedNode}">
+		                	
+		                	<p:ajax event="select" listener="#{measurableObjectBeanList.onNodeSelect}" update=":measurableObjects :treeStructureSelectedObject" />
+					        
+					        <p:treeNode>
+					            <h:outputText value="#{node}" />
+					        </p:treeNode>
+					        
+					    </p:tree>
+		
+					</h:form>
+	    		
+				</div>
+	    		<div class="ui-g-8">
+
+	    			<h:form id="treeStructureSelectedObject" method="post">
+						<p:growl id="msgs" />
+						<h2 class="form-signin-heading">Objeto seleccionado</h2>
+						<hr></hr>
+						<p:dataTable id="stnDataTable"
+							value="#{measurableObjectBeanList.selectedTreeNode}" 
+							var="stn"
+							tableStyle="table-layout: auto;" 
+							rowKey="#{stn.getMeasurableObjectID()}" 
+							widgetVar="stnw" 
+							editable="true"
+							emptyMessage="No existe objecto medible o no ha sido seleccionado aun.">
+		
+							<p:ajax event="rowEdit" listener="#{measurableObjectBeanList.onTreeRowEdit}" update=":idesTreeStructure :treeStructureSelectedObject:msgs" />		
+		
+							<p:column headerText="ID" sortBy="#{stn.getMeasurableObjectID()}">
+								<h:outputText value="#{stn.getMeasurableObjectID()}" />
+							</p:column>
+
+							<p:column headerText="Nombre" sortBy="#{stn.measurableObjectName}">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{stn.measurableObjectName}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText id="NameInput" value="#{stn.measurableObjectName}" style="width:100%" />
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+
+							<p:column headerText="Descripción" sortBy="#{stn.measurableObjectDescription}">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{stn.measurableObjectDescription}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText id="DescriptionInput" value="#{stn.measurableObjectDescription}" style="width:100%" />
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+
+							<p:column headerText="Acciones">
+								<p:rowEditor />
+							</p:column>
+
+						</p:dataTable>
+					</h:form>
+
+					<br></br>
+	    		
+	    			<h:form id="measurableObjects" method="post">
+						<p:growl id="msgs" />
+						<h2 class="form-signin-heading">Servicios/Capas</h2>
+						<hr></hr>
+						<p:dataTable id="measurableObjects"
+							value="#{measurableObjectBeanList.listObjects}" 
+							var="moitem"
+							tableStyle="table-layout: auto;" 
+							selection="#{measurableObjectBeanList.selectedMeasurableObject}"
+							rowKey="#{moitem.getMeasurableObjectID()}" 
+							style="margin-bottom:40" 					
+							rows="10" 
+							paginator="true"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="10,25,50" 
+							widgetVar="mo" 
+							editable="true"
+							emptyMessage="No existen servicios/capas para el objeto medible seleccionado.">
+							
+							<p:ajax event="rowEdit" listener="#{measurableObjectBeanList.onRowEdit}" update=":measurableObjects:msgs" />
+		       				<p:ajax event="rowSelectRadio" listener="#{measurableObjectBeanList.onRowSelect}" />
+		
+							<p:column selectionMode="single"
+								style="width:40px; text-align:center" />
+		
+							<p:column headerText="ID" sortBy="#{moitem.measurableObjectID}">
+								<h:outputText value="#{moitem.measurableObjectID}" />
+							</p:column>
+							<p:column headerText="Descripción" sortBy="#{moitem.measurableObjectDescription}">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{moitem.measurableObjectDescription}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText id="DescriptionInput" value="#{moitem.measurableObjectDescription}" style="width:100%" />
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							<p:column headerText="Tipo" sortBy="#{moitem.entityType}">
+								<h:outputText value="#{moitem.entityType}" />
+							</p:column>
+							<p:column headerText="Tipo de Servicio" sortBy="#{moitem.measurableObjectServicesType}">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{moitem.measurableObjectServicesType}" />
+									</f:facet>
+									<f:facet name="input">
+										<h:selectOneMenu value="#{moitem.measurableObjectServicesType}" style="width:100%">
+											<f:selectItem itemValue="WMS" itemLabel="WMS"/>
+											<f:selectItem itemValue="WFS" itemLabel="WFS"/>
+											<f:selectItem itemValue="CSW" itemLabel="CSW"/>
+										</h:selectOneMenu>
+									</f:facet>
+								</p:cellEditor>					
+							</p:column>
+							<p:column headerText="URL" sortBy="#{moitem.measurableObjectURL}">
+								<p:cellEditor>
+									<f:facet name="output">
+										<a href="#{moitem.measurableObjectURL}">Link al Servicio</a>
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText id="URLInput" value="#{moitem.measurableObjectURL}" style="width:100%" />
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							<p:column headerText="Acciones">
+								<p:rowEditor />
+							</p:column>
+						</p:dataTable>
+		
+						<div class="panel panel-default">
+							<div class="panel-body">
+								<p:button class="btn btn-default" icon="ui-icon-plus"
+									value="Nuevo" outcome="measurableObjectAdd" />
+								<p:commandButton class="btn btn-default" icon="ui-icon-trash"
+									value="Eliminar" id="deleteMeasurableObjectIcon"
+									actionListener="#{measurableObjectBeanList.deleteMeasurableObject}" update="measurableObjects :measurableObjects:msgs" />							
+							</div>
+						</div>
+					</h:form>
+	    		
+	    		</div>
+			</div>
+		</div>
+
+
+		<script src="../../assets/js/vendor/jquery.min.js"></script>
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.2.0/js/tether.min.js"></script>
+		<script src="../../dist/js/bootstrap.min.js"></script>
+		<script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+
+	</h:body>
+</f:view>
+</html>
